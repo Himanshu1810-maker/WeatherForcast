@@ -1,0 +1,71 @@
+package weatherforcast.cucumber.api.steps.definition;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
+
+@SuppressWarnings("unused")
+public class WeatherStepDefs {
+
+
+	private Map<String, String> Data = new HashMap<String, String>();
+
+	String url = "https://www.metaweather.com/api/location/44418/{0}/";
+	private Response res = null;
+	private Response response = null;
+
+	@Given("^Open MetaWeather API end point is available with \"([^\"]*)\" using \"([^\"]*)\"$")
+	public void open_MetaWeather_API_end_point_is_avilable_with_using(
+			String woeid, String date) {
+		System.out.println("Woe Id Value --> " + woeid);
+		System.out.println("Date --> " +date);
+
+
+	}
+
+
+	@When("^I submit GET request to MetaWeather endpoint call \"([^\"]*)\"$")
+	public void i_submit_GET_request_to_MetaWeather_endpoint_call(String date) {
+
+		String GET_location_Day = url.replace("{0}", date);
+		RequestSpecification httpRequest = RestAssured.given().relaxedHTTPSValidation().
+				accept(ContentType.JSON).when().log().all();
+		response = httpRequest.get(GET_location_Day);
+
+	}
+
+
+	@Then("^endpoint should return weather_state_name as expected with valid status code$")
+	public void endpoint_should_return() {
+
+		int status = response.getStatusCode();
+
+		if (status == 200) {
+
+			JSONArray array = new JSONArray(response.body().asString());
+
+			for (int i = 0; i < array.length(); i++) {
+				JSONObject object = (JSONObject) array.get(i);
+				System.out.println(object);
+				System.out.println(object.getString("weather_state_name"));
+				String actual = object.getString("weather_state_name");
+				//assertThat(object.getString("weather_state_name")).isEqual("Heavy Cloud"));
+				assertTrue(actual.equals("Heavy Cloud"));
+				System.out.println(object.getString("!!!!!!!! TEST PASSED !!!!!!"));
+				break;
+			}
+		}
+	}
+
+}
