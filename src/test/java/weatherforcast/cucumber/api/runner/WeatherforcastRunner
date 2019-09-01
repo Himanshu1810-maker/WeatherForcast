@@ -1,0 +1,17 @@
+package weatherforcast.cucumber.api.runner;
+
+import org.junit.runner.RunWith;
+//import org.junit.runners.*;
+
+import cucumber.api.CucumberOptions;
+import cucumber.api.junit.Cucumber;
+
+
+@RunWith(Cucumber.class)
+
+@CucumberOptions(features ="src/test/resources/features/weather.feature",
+glue = "weatherforcast")
+
+public class WeatherforcastRunner {
+
+}
